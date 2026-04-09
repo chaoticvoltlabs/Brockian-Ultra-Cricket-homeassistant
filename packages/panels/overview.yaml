@@ -1,0 +1,40 @@
+template:
+  - sensor:
+      - name: "Panel Overview Payload"
+        unique_id: panel_overview_payload
+        state: "{{ now().isoformat() }}"
+        attributes:
+          version: 1
+          generated_at: "{{ now().isoformat() }}"
+          map_asset: "/local/maps/region_overview.svg"
+          map_format: "svg"
+          map_version: 1
+          map_theme: "light"
+          indoor: >
+            {{ state_attr('sensor.panel_indoor_payload', 'tiles') | default('[]', true) }}
+          weather: >
+            {{ state_attr('sensor.panel_weather_48h', 'forecast') | default('[]', true) }}
+          weather_meta: >
+            {{
+              {
+                "provider": state_attr('sensor.panel_weather_48h', 'provider'),
+                "source": state_attr('sensor.panel_weather_48h', 'source'),
+                "wind_unit": state_attr('sensor.panel_weather_48h', 'wind_unit'),
+                "generated_at": state_attr('sensor.panel_weather_48h', 'generated_at'),
+                "version": state_attr('sensor.panel_weather_48h', 'version')
+              } | tojson
+            }}
+          pressure_trend_24h: >
+            {{ state_attr('sensor.outside_pressure_trend_24h', 'trend_points_json')
+              if state_attr('sensor.outside_pressure_trend_24h', 'trend_points_json') is not none
+              else [] }}
+          pressure_trend_meta: >
+            {{
+              {
+                "bucket_minutes": 30,
+                "window_hours": 24,
+                "aggregation": state_attr('sensor.outside_pressure_trend_24h', 'aggregation'),
+                "updated_at": state_attr('sensor.outside_pressure_trend_24h', 'updated_at'),
+                "point_count": state_attr('sensor.outside_pressure_trend_24h', 'point_count')
+              } | tojson
+            }}

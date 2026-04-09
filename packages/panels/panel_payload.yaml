@@ -1,0 +1,63 @@
+template:
+  - sensor:
+      - name: "Panel Indoor Payload"
+        unique_id: panel_indoor_payload
+        state: "{{ now().isoformat() }}"
+        attributes:
+          tiles: >
+            {% set tiles = [
+              {"page": 1, "row": 0, "col": 0, "label": "Office", "key": "office", "temp_entity": "sensor.panel_office_temperature", "hum_entity": "sensor.panel_office_humidity"},
+              {"page": 1, "row": 0, "col": 1, "label": "Bathroom", "key": "bathroom", "temp_entity": "sensor.panel_bathroom_temperature", "hum_entity": "sensor.panel_bathroom_humidity"},
+              {"page": 1, "row": 0, "col": 2, "label": "Bedroom", "key": "bedroom", "temp_entity": "sensor.panel_bedroom_temperature", "hum_entity": "sensor.panel_bedroom_humidity"},
+              {"page": 1, "row": 0, "col": 3, "label": "Wardrobe", "key": "wardrobe", "temp_entity": "sensor.panel_wardrobe_temperature", "hum_entity": "sensor.panel_wardrobe_humidity"},
+              {"page": 1, "row": 1, "col": 0, "label": "Kitchen", "key": "kitchen", "temp_entity": "sensor.panel_kitchen_temperature", "hum_entity": "sensor.panel_kitchen_humidity"},
+              {"page": 1, "row": 1, "col": 1, "label": "Living", "key": "living", "temp_entity": "sensor.panel_living_temperature", "hum_entity": "sensor.panel_living_humidity"},
+              {"page": 1, "row": 1, "col": 2, "label": "Library", "key": "library", "temp_entity": "sensor.panel_library_temperature", "hum_entity": "sensor.panel_library_humidity"},
+              {"page": 1, "row": 1, "col": 3, "label": "", "key": "empty", "temp_entity": "", "hum_entity": ""},
+              {"page": 1, "row": 2, "col": 0, "label": "Servers", "key": "servers", "temp_entity": "sensor.panel_servers_temperature", "hum_entity": "sensor.panel_servers_humidity"},
+              {"page": 1, "row": 2, "col": 1, "label": "Laundry", "key": "laundry", "temp_entity": "sensor.panel_laundry_temperature", "hum_entity": "sensor.panel_laundry_humidity"},
+              {"page": 1, "row": 2, "col": 2, "label": "Utility", "key": "utility", "temp_entity": "sensor.panel_utility_temperature", "hum_entity": "sensor.panel_utility_humidity"},
+              {"page": 1, "row": 2, "col": 3, "label": "Studio", "key": "studio", "temp_entity": "sensor.panel_studio_temperature", "hum_entity": "sensor.panel_studio_humidity"},
+              {"page": 1, "row": 3, "col": 0, "label": "Outside", "key": "outdoor", "temp_entity": "sensor.panel_outdoor_temperature", "hum_entity": "sensor.panel_outdoor_humidity"},
+              {"page": 1, "row": 3, "col": 1, "label": "Sunroom", "key": "sunroom", "temp_entity": "sensor.panel_sunroom_temperature", "hum_entity": "sensor.panel_sunroom_humidity"},
+              {"page": 1, "row": 3, "col": 2, "label": "Garage", "key": "garage", "temp_entity": "sensor.panel_garage_temperature", "hum_entity": "sensor.panel_garage_humidity"}
+            ] %}
+
+            {% set ns = namespace(out=[]) %}
+
+            {% for tile in tiles %}
+              {% if tile.temp_entity == "" %}
+                {% set item = dict(
+                  page=tile.page,
+                  row=tile.row,
+                  col=tile.col,
+                  label=tile.label,
+                  key=tile.key,
+                  temp=None,
+                  hum=None,
+                  temp_unit="°C",
+                  hum_unit="%"
+                ) %}
+              {% else %}
+                {% set temp_raw = states(tile.temp_entity) %}
+                {% set hum_raw = states(tile.hum_entity) %}
+
+                {% set temp_val = (temp_raw | float(none)) %}
+                {% set hum_val = (hum_raw | float(none)) %}
+
+                {% set item = dict(
+                  page=tile.page,
+                  row=tile.row,
+                  col=tile.col,
+                  label=tile.label,
+                  key=tile.key,
+                  temp=(temp_val | round(1)) if temp_val is not none else none,
+                  hum=(hum_val | round(0) | int) if hum_val is not none else none,
+                  temp_unit="°C",
+                  hum_unit="%"
+                ) %}
+              {% endif %}
+              {% set ns.out = ns.out + [item] %}
+            {% endfor %}
+
+            {{ ns.out | tojson }}

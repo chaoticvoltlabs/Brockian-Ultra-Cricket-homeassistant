@@ -1,0 +1,144 @@
+template:
+  - sensor:
+      - name: "Panel Indoor Layout"
+        unique_id: panel_indoor_layout
+        state: "ready"
+        attributes:
+          tiles: >
+            {{ [
+              {
+                "page": 1,
+                "row": 0,
+                "col": 0,
+                "label": "Office",
+                "key": "office",
+                "temp": "sensor.panel_office_temperature",
+                "hum": "sensor.panel_office_humidity"
+              },
+              {
+                "page": 1,
+                "row": 0,
+                "col": 1,
+                "label": "Bathroom",
+                "key": "bathroom",
+                "temp": "sensor.panel_bathroom_temperature",
+                "hum": "sensor.panel_bathroom_humidity"
+              },
+              {
+                "page": 1,
+                "row": 0,
+                "col": 2,
+                "label": "Bedroom",
+                "key": "bedroom",
+                "temp": "sensor.panel_bedroom_temperature",
+                "hum": "sensor.panel_bedroom_humidity"
+              },
+              {
+                "page": 1,
+                "row": 0,
+                "col": 3,
+                "label": "Wardrobe",
+                "key": "wardrobe",
+                "temp": "sensor.panel_wardrobe_temperature",
+                "hum": "sensor.panel_wardrobe_humidity"
+              },
+              {
+                "page": 1,
+                "row": 1,
+                "col": 0,
+                "label": "Kitchen",
+                "key": "kitchen",
+                "temp": "sensor.panel_kitchen_temperature",
+                "hum": "sensor.panel_kitchen_humidity"
+              },
+              {
+                "page": 1,
+                "row": 1,
+                "col": 1,
+                "label": "Living",
+                "key": "living",
+                "temp": "sensor.panel_living_temperature",
+                "hum": "sensor.panel_living_humidity"
+              },
+              {
+                "page": 1,
+                "row": 1,
+                "col": 2,
+                "label": "Library",
+                "key": "library",
+                "temp": "sensor.panel_library_temperature",
+                "hum": "sensor.panel_library_humidity"
+              },
+              {
+                "page": 1,
+                "row": 1,
+                "col": 3,
+                "label": "",
+                "key": "empty",
+                "temp": "",
+                "hum": ""
+              },
+              {
+                "page": 1,
+                "row": 2,
+                "col": 0,
+                "label": "Servers",
+                "key": "servers",
+                "temp": "sensor.panel_servers_temperature",
+                "hum": "sensor.panel_servers_humidity"
+              },
+              {
+                "page": 1,
+                "row": 2,
+                "col": 1,
+                "label": "Laundry",
+                "key": "laundry",
+                "temp": "sensor.panel_laundry_temperature",
+                "hum": "sensor.panel_laundry_humidity"
+              },
+              {
+                "page": 1,
+                "row": 2,
+                "col": 2,
+                "label": "Dungeon",
+                "key": "utility",
+                "temp": "sensor.panel_utility_temperature",
+                "hum": "sensor.panel_utility_humidity"
+              },
+              {
+                "page": 1,
+                "row": 2,
+                "col": 3,
+                "label": "Studio",
+                "key": "studio",
+                "temp": "sensor.panel_studio_temperature",
+                "hum": "sensor.panel_studio_humidity"
+              },
+              {
+                "page": 1,
+                "row": 3,
+                "col": 0,
+                "label": "Outside",
+                "key": "outdoor",
+                "temp": "sensor.panel_outdoor_temperature",
+                "hum": "sensor.panel_outdoor_humidity"
+              },
+              {
+                "page": 1,
+                "row": 3,
+                "col": 1,
+                "label": "Sunroom",
+                "key": "sunroom",
+                "temp": "sensor.panel_sunroom_temperature",
+                "hum": "sensor.panel_sunroom_humidity"
+              },
+              {
+                "page": 1,
+                "row": 3,
+                "col": 2,
+                "label": "Garage",
+                "key": "garage",
+                "temp": "sensor.panel_garage_temperature",
+                "hum": "sensor.panel_garage_humidity"
+              }
+            ] }}

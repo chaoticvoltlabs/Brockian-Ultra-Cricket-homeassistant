@@ -1,0 +1,253 @@
+template:
+  - sensor:
+      - name: "Panel Office Temperature"
+        unique_id: panel_office_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_office_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Office Humidity"
+        unique_id: panel_office_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_office_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Bathroom Temperature"
+        unique_id: panel_bathroom_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_bathroom_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Bathroom Humidity"
+        unique_id: panel_bathroom_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_bathroom_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Bedroom Temperature"
+        unique_id: panel_bedroom_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_bedroom_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Bedroom Humidity"
+        unique_id: panel_bedroom_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_bedroom_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Wardrobe Temperature"
+        unique_id: panel_wardrobe_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_wardrobe_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Wardrobe Humidity"
+        unique_id: panel_wardrobe_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_wardrobe_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Kitchen Temperature"
+        unique_id: panel_kitchen_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_kitchen_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Kitchen Humidity"
+        unique_id: panel_kitchen_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_kitchen_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Living Temperature"
+        unique_id: panel_living_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_living_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Living Humidity"
+        unique_id: panel_living_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_living_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Library Temperature"
+        unique_id: panel_library_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_library_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Library Humidity"
+        unique_id: panel_library_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_library_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Servers Temperature"
+        unique_id: panel_servers_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_servers_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Servers Humidity"
+        unique_id: panel_servers_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_servers_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Laundry Temperature"
+        unique_id: panel_laundry_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_laundry_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Laundry Humidity"
+        unique_id: panel_laundry_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_laundry_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Utility Temperature"
+        unique_id: panel_utility_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_utility_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Utility Humidity"
+        unique_id: panel_utility_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_utility_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Studio Temperature"
+        unique_id: panel_studio_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_studio_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Studio Humidity"
+        unique_id: panel_studio_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_studio_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Outdoor Temperature"
+        unique_id: panel_outdoor_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_outdoor_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Outdoor Humidity"
+        unique_id: panel_outdoor_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_outdoor_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Sunroom Temperature"
+        unique_id: panel_sunroom_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_sunroom_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Sunroom Humidity"
+        unique_id: panel_sunroom_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_sunroom_humidity') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Garage Temperature"
+        unique_id: panel_garage_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_garage_temperature') %}
+          {{ v | float if is_number(v) else none }}
+
+      - name: "Panel Garage Humidity"
+        unique_id: panel_garage_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set v = states('sensor.example_garage_humidity') %}
+          {{ v | float if is_number(v) else none }}

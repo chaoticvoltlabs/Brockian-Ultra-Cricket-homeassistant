@@ -1,0 +1,167 @@
+template:
+  - sensor:
+      - name: "Panel Weather Current"
+        unique_id: panel_weather_current
+        state: "{{ now().isoformat() }}"
+        attributes:
+          current: >
+            {% set om = state_attr('sensor.open_meteo_raw_weather', 'current') %}
+            {% set t = states('sensor.outside_temperature') %}
+            {% set rh = states('sensor.outside_humidity') %}
+            {% set p = states('sensor.outside_barometric_pressure') %}
+
+            {% set ws = om.wind_speed_10m if om and om.wind_speed_10m is defined else none %}
+            {% set wg = om.wind_gusts_10m if om and om.wind_gusts_10m is defined else none %}
+
+            {% macro bft(v) -%}
+              {%- if v is number -%}
+                {%- if v < 1 -%}0
+                {%- elif v < 6 -%}1
+                {%- elif v < 12 -%}2
+                {%- elif v < 20 -%}3
+                {%- elif v < 29 -%}4
+                {%- elif v < 39 -%}5
+                {%- elif v < 50 -%}6
+                {%- elif v < 62 -%}7
+                {%- elif v < 75 -%}8
+                {%- elif v < 89 -%}9
+                {%- elif v < 103 -%}10
+                {%- elif v < 118 -%}11
+                {%- else -%}12
+                {%- endif -%}
+              {%- else -%}
+                {{ none }}
+              {%- endif -%}
+            {%- endmacro %}
+
+            {{
+              {
+                "t": (t | float) if is_number(t) else none,
+                "feels_like": om.apparent_temperature if om and om.apparent_temperature is defined else none,
+                "rh": (rh | float) if is_number(rh) else none,
+                "pressure": (p | float) if is_number(p) else none,
+                "ws": ws,
+                "ws_bft": (bft(ws) | int) if ws is number else none,
+                "wg": wg,
+                "wg_bft": (bft(wg) | int) if wg is number else none,
+                "wd": om.wind_direction_10m if om and om.wind_direction_10m is defined else none,
+                "precip": om.precipitation if om and om.precipitation is defined else none
+              } | tojson
+            }}
+      - name: "Panel Weather Current Wind Speed Bft"
+        unique_id: panel_weather_current_wind_speed_bft
+        unit_of_measurement: "bft"
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.ws_bft if c and c.ws_bft is defined else none }}
+
+      - name: "Panel Weather Current Wind Gust Bft"
+        unique_id: panel_weather_current_wind_gust_bft
+        unit_of_measurement: "bft"
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.wg_bft if c and c.wg_bft is defined else none }}
+
+      - name: "Panel Weather Current Temperature"
+        unique_id: panel_weather_current_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.t if c and c.t is defined else none }}
+
+      - name: "Panel Weather Current Feels Like"
+        unique_id: panel_weather_current_feels_like
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.feels_like if c and c.feels_like is defined else none }}
+
+      - name: "Panel Weather Current Humidity"
+        unique_id: panel_weather_current_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.rh if c and c.rh is defined else none }}
+
+      - name: "Panel Weather Current Pressure"
+        unique_id: panel_weather_current_pressure
+        unit_of_measurement: "hPa"
+        device_class: atmospheric_pressure
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.pressure if c and c.pressure is defined else none }}
+
+      - name: "Panel Weather Current Wind Speed"
+        unique_id: panel_weather_current_wind_speed
+        unit_of_measurement: "km/h"
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.ws if c and c.ws is defined else none }}
+
+      - name: "Panel Weather Current Wind Gust"
+        unique_id: panel_weather_current_wind_gust
+        unit_of_measurement: "km/h"
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.wg if c and c.wg is defined else none }}
+
+      - name: "Panel Weather Current Wind Bearing"
+        unique_id: panel_weather_current_wind_bearing
+        unit_of_measurement: "°"
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.wd if c and c.wd is defined else none }}
+
+      - name: "Panel Weather Current Precipitation"
+        unique_id: panel_weather_current_precipitation
+        unit_of_measurement: "mm"
+        state_class: measurement
+        state: >
+          {% set raw = state_attr('sensor.panel_weather_current', 'current') %}
+          {% set c = raw | from_json if raw is string else raw %}
+          {{ c.precip if c and c.precip is defined else none }}
+
+      - name: "Panel Weather Current Wind Direction Label"
+        unique_id: panel_weather_current_wind_direction_label
+        state: >
+          {% set b = states('sensor.panel_weather_current_wind_bearing') %}
+          {% if is_number(b) %}
+            {% set bearing = b | float %}
+            {% set dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] %}
+            {% set idx = ((bearing + 22.5) // 45) % 8 %}
+            {{ dirs[idx | int] }}
+          {% else %}
+            unknown
+          {% endif %}
+
+      - name: "Panel Weather Current Wind Direction Human"
+        unique_id: panel_weather_current_wind_direction_human
+        state: >
+          {% set lbl = states('sensor.panel_weather_current_wind_direction_label') %}
+          {% set deg = states('sensor.panel_weather_current_wind_bearing') %}
+          {% if lbl not in ['unknown', 'unavailable', ''] and is_number(deg) %}
+            {{ lbl }} ({{ deg | float | round(0) }}°)
+          {% elif lbl not in ['unknown', 'unavailable', ''] %}
+            {{ lbl }}
+          {% else %}
+            unknown
+          {% endif %}

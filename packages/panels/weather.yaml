@@ -1,0 +1,128 @@
+template:
+  - sensor:
+      - name: "Panel Weather 48h"
+        unique_id: panel_weather_48h
+        state: "{{ now().isoformat() }}"
+        attributes:
+          version: 2
+          provider: "open-meteo-rest"
+          source: "sensor.open_meteo_raw_weather"
+          wind_unit: "km/h"
+          generated_at: "{{ now().isoformat() }}"
+          forecast: >
+            {% set raw = state_attr('sensor.open_meteo_raw_weather', 'hourly') %}
+            {% if raw is string %}
+              {% set hourly = raw | from_json %}
+            {% else %}
+              {% set hourly = raw %}
+            {% endif %}
+
+            {% if hourly %}
+              {% set times = hourly.time if hourly.time is defined else [] %}
+              {% set ws_list = hourly.wind_speed_10m if hourly.wind_speed_10m is defined else [] %}
+              {% set wg_list = hourly.wind_gusts_10m if hourly.wind_gusts_10m is defined else [] %}
+              {% set wd_list = hourly.wind_direction_10m if hourly.wind_direction_10m is defined else [] %}
+              {% set ns = namespace(out=[]) %}
+
+              {% for i in range(times | count) %}
+                {% set t = times[i] if i < (times | count) else none %}
+                {% set ws = ws_list[i] if i < (ws_list | count) else none %}
+                {% set wg = wg_list[i] if i < (wg_list | count) else none %}
+                {% set wd = wd_list[i] if i < (wd_list | count) else none %}
+
+                {% if wd is not none %}
+                  {% set dirs = ['N', 'NNO', 'NO', 'ONO', 'O', 'OZO', 'ZO', 'ZZO', 'Z', 'ZZW', 'ZW', 'WZW', 'W', 'WNW', 'NW', 'NNW'] %}
+                  {% set wd_norm = wd | float %}
+                  {% set wd_idx = ((wd_norm + 11.25) // 22.5) % 16 %}
+                  {% set wd_label = dirs[wd_idx | int] %}
+                {% else %}
+                  {% set wd_label = none %}
+                {% endif %}
+
+                {% if t is not none %}
+                  {% set local_dt = as_local(as_datetime(t)) %}
+                {% else %}
+                  {% set local_dt = none %}
+                {% endif %}
+
+                {% set item = dict(
+                  t=t,
+                  hour=local_dt.strftime('%H:%M') if local_dt is not none else none,
+                  ws=(ws | round(1)) if ws is not none else none,
+                  wg=(wg | round(1)) if wg is not none else none,
+                  wd=(wd | int) if wd is not none else none,
+                  wd_label=wd_label
+                ) %}
+                {% set ns.out = ns.out + [item] %}
+              {% endfor %}
+
+              {{ ns.out[:48] | tojson }}
+            {% else %}
+              []
+            {% endif %}
+
+      - name: "Panel Weather Daily"
+        unique_id: panel_weather_daily
+        state: "{{ now().isoformat() }}"
+        attributes:
+          version: 2
+          provider: "open-meteo-rest"
+          source: "sensor.open_meteo_raw_weather"
+          wind_unit: "km/h"
+          generated_at: "{{ now().isoformat() }}"
+          days: >
+            {% set raw = state_attr('sensor.open_meteo_raw_weather', 'daily') %}
+            {% if raw is string %}
+              {% set daily = raw | from_json %}
+            {% else %}
+              {% set daily = raw %}
+            {% endif %}
+
+            {% if daily %}
+              {% set times = daily.time if daily.time is defined else [] %}
+              {% set tmax_list = daily.temperature_2m_max if daily.temperature_2m_max is defined else [] %}
+              {% set tmin_list = daily.temperature_2m_min if daily.temperature_2m_min is defined else [] %}
+              {% set pop_list = daily.precipitation_probability_max if daily.precipitation_probability_max is defined else [] %}
+              {% set ws_list = daily.wind_speed_10m_max if daily.wind_speed_10m_max is defined else [] %}
+              {% set wg_list = daily.wind_gusts_10m_max if daily.wind_gusts_10m_max is defined else [] %}
+              {% set wd_list = daily.wind_direction_10m_dominant if daily.wind_direction_10m_dominant is defined else [] %}
+              {% set wc_list = daily.weather_code if daily.weather_code is defined else [] %}
+              {% set ns = namespace(out=[]) %}
+
+              {% for i in range(times | count) %}
+                {% set date = times[i] if i < (times | count) else none %}
+                {% set t_min = tmin_list[i] if i < (tmin_list | count) else none %}
+                {% set t_max = tmax_list[i] if i < (tmax_list | count) else none %}
+                {% set pop = pop_list[i] if i < (pop_list | count) else none %}
+                {% set ws = ws_list[i] if i < (ws_list | count) else none %}
+                {% set wg = wg_list[i] if i < (wg_list | count) else none %}
+                {% set wd = wd_list[i] if i < (wd_list | count) else none %}
+                {% set wc = wc_list[i] if i < (wc_list | count) else none %}
+
+                {% if wd is not none %}
+                  {% set dirs = ['N', 'NO', 'O', 'ZO', 'Z', 'ZW', 'W', 'NW'] %}
+                  {% set wd_idx = ((wd | float + 22.5) // 45) % 8 %}
+                  {% set wd_label = dirs[wd_idx | int] %}
+                {% else %}
+                  {% set wd_label = none %}
+                {% endif %}
+
+                {% set item = dict(
+                  day_index=i,
+                  date=date,
+                  t_min=(t_min | round(1)) if t_min is not none else none,
+                  t_max=(t_max | round(1)) if t_max is not none else none,
+                  pop=(pop | int) if pop is not none else none,
+                  ws_max=(ws | round(1)) if ws is not none else none,
+                  wg_max=(wg | round(1)) if wg is not none else none,
+                  wd=(wd | int) if wd is not none else none,
+                  wd_label=wd_label,
+                  weather_code=(wc | int) if wc is not none else none
+                ) %}
+                {% set ns.out = ns.out + [item] %}
+              {% endfor %}
+
+              {{ ns.out[:4] | tojson }}
+            {% else %}
+              []
+            {% endif %}

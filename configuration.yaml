@@ -1,0 +1,254 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+mqtt:
+  sensor:
+    - name: "Outside Temperature"
+      unique_id: outside_temperature
+      state_topic: "example/weather_station/temperature"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+
+    - name: "Outside Humidity"
+      unique_id: outside_humidity
+      state_topic: "example/weather_station/humidity"
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+
+    - name: "Outside Barometric Pressure"
+      unique_id: outside_barometric_pressure
+      state_topic: "example/weather_station/pressure"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+
+    - name: "Utility Room Uptime"
+      unique_id: example_utility_room_uptime_ms
+      state_topic: "example/utility_room"
+      value_template: "{{ value_json.uptime_ms }}"
+      unit_of_measurement: "ms"
+      icon: mdi:timer-outline
+
+    - name: "Utility Room Temperature"
+      unique_id: example_utility_room_temperature
+      state_topic: "example/utility_room"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: "{{ (value_json.bme280.t_c | float) | round(1) }}"
+
+    - name: "Utility Room Humidity"
+      unique_id: example_utility_room_humidity
+      state_topic: "example/utility_room"
+      device_class: humidity
+      unit_of_measurement: "%"
+      state_class: measurement
+      value_template: "{{ (value_json.bme280.rh_pct | float) | round(1) }}"
+
+    - name: "Laundry Temperature"
+      unique_id: example_laundry_temperature
+      state_topic: "example/laundry"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: "{{ (value_json.bme280.temp_c | float) | round(1) }}"
+
+    - name: "Laundry Humidity"
+      unique_id: example_laundry_humidity
+      state_topic: "example/laundry"
+      device_class: humidity
+      unit_of_measurement: "%"
+      state_class: measurement
+      value_template: "{{ (value_json.bme280.humidity_rh | float) | round(0) }}"
+
+    - name: "Laundry Barometric Pressure"
+      unique_id: example_laundry_pressure
+      state_topic: "example/laundry"
+      device_class: atmospheric_pressure
+      unit_of_measurement: "hPa"
+      state_class: measurement
+      value_template: "{{ (value_json.bme280.pressure_hpa | float) | round(0) }}"
+ 
+    - name: "Outside Pressure Trend Raw"
+      unique_id: outside_pressure_trend_raw
+      state_topic: "example/weather/outside/baro_trend_24h"
+      value_template: "{{ value_json.points[-1] if value_json.points is defined and value_json.points | count > 0 else none }}"
+      unit_of_measurement: "hPa"
+      device_class: atmospheric_pressure
+      state_class: measurement
+      json_attributes_topic: "example/weather/outside/baro_trend_24h"
+      json_attributes_template: >
+        {
+          "points": {{ value_json.points | tojson if value_json.points is defined else '[]' }},
+          "bucket_minutes": {{ value_json.bucket_minutes | default(30) }},
+          "window_hours": {{ value_json.window_hours | default(24) }},
+          "aggregation": {{ value_json.aggregation | tojson if value_json.aggregation is defined else '"median"' }},
+          "updated_at": {{ value_json.updated_at | tojson if value_json.updated_at is defined else 'null' }}
+        }
+    
+    # ---------- DS18B20 (index based) ----------
+    - name: "Utility Room Heat Pump Supply"
+      unique_id: example_utility_room_heat_pump_supply_temp
+      state_topic: "example/utility_room"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: >
+        {% set target = "8575162825221096488" %}
+        {% set item = (value_json.ds18b20 | selectattr('rom','equalto', target) | list | first) %}
+        {{ item.temp_c | float if item is defined else none }}
+
+    - name: "Utility Room Heat Pump Return"
+      unique_id: example_utility_room_heat_pump_return_temp
+      state_topic: "example/utility_room"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: >
+        {% set target = "3675246431290625576" %}
+        {% set item = (value_json.ds18b20 | selectattr('rom','equalto', target) | list | first) %}
+        {{ item.temp_c | float if item is defined else none }}
+
+    - name: "Utility Room Hot Water"
+      unique_id: example_utility_room_hot_water_temp
+      state_topic: "example/utility_room"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: >
+        {% set target = "16717670951826218536" %}
+        {% set item = (value_json.ds18b20 | selectattr('rom','equalto', target) | list | first) %}
+        {{ item.temp_c | float if item is defined else none }}
+
+    - name: "Utility Room Cold Water"
+      unique_id: example_utility_room_cold_water_temp
+      state_topic: "example/utility_room"
+      device_class: temperature
+      unit_of_measurement: "°C"
+      state_class: measurement
+      value_template: >
+        {% set target = "10664833052702350632" %}
+        {% set item = (value_json.ds18b20 | selectattr('rom','equalto', target) | list | first) %}
+        {{ item.temp_c | float if item is defined else none }}
+
+sensor:
+  - platform: statistics
+    name: outside_pressure_30m_median
+    entity_id: sensor.outside_barometric_pressure
+    state_characteristic: median
+    max_age:
+      minutes: 30
+    sampling_size: 900
+    precision: 1
+
+template:
+  - sensor:
+      - name: "Utility Room Heat Pump Delta T"
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set a = states('sensor.boilerroom_wp_cv_aanvoer') %}
+          {% set r = states('sensor.boilerroom_wp_cv_retour') %}
+          {% if a not in ['unknown','unavailable'] and r not in ['unknown','unavailable'] %}
+            {{ (a|float - r|float) | round(2) }}
+          {% else %}
+            {{ none }}
+          {% endif %}
+
+      - name: "Utility Room Hot Water Delta T"
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set w = states('sensor.boilerroom_wp_warmwater') %}
+          {% set k = states('sensor.boilerroom_wp_koudwater') %}
+          {% if w not in ['unknown','unavailable'] and k not in ['unknown','unavailable'] %}
+            {{ (w|float - k|float) | round(2) }}
+          {% else %}
+            {{ none }}
+          {% endif %}
+
+  - sensor:
+      - name: "Indoor Average Comfort"
+        unique_id: indoor_average_comfort
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set ents = [
+            'sensor.example_living_temperature',
+            'sensor.example_kitchen_temperature',
+            'sensor.example_studio_temperature'
+          ] %}
+          {% set ns = namespace(vals=[]) %}
+          {% for e in ents %}
+            {% set s = states(e) %}
+            {% if s not in ['unknown','unavailable','none',''] %}
+              {% set ns.vals = ns.vals + [ s|float ] %}
+            {% endif %}
+          {% endfor %}
+          {{ (ns.vals|sum / (ns.vals|length)) | round(2) if (ns.vals|length)>0 else 'unknown' }}
+
+      - name: "Indoor Comfort Spread"
+        unique_id: indoor_comfort_spread
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >
+          {% set ents = [
+            'sensor.example_living_temperature',
+            'sensor.example_kitchen_temperature',
+            'sensor.example_studio_temperature'
+          ] %}
+          {% set ns = namespace(vals=[]) %}
+          {% for e in ents %}
+            {% set s = states(e) %}
+            {% if s not in ['unknown','unavailable','none',''] %}
+              {% set ns.vals = ns.vals + [ s|float ] %}
+            {% endif %}
+          {% endfor %}
+          {{ ((ns.vals|max) - (ns.vals|min)) | round(2) if (ns.vals|length)>1 else 'unknown' }}
+
+      - name: "Outside Pressure Trend 24h"
+        unique_id: outside_pressure_trend_24h
+        unit_of_measurement: "hPa"
+        device_class: atmospheric_pressure
+        state_class: measurement
+        state: "{{ states('sensor.outside_pressure_trend_raw') }}"
+        attributes:
+          trend_points_json: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'points') | tojson
+               if state_attr('sensor.outside_pressure_trend_raw', 'points') is not none
+               else '[]' }}
+          point_count: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'points') | count
+               if state_attr('sensor.outside_pressure_trend_raw', 'points') is not none
+               else 0 }}
+          trend_window: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'window_hours') | string ~ 'h'
+               if state_attr('sensor.outside_pressure_trend_raw', 'window_hours') is not none
+               else '24h' }}
+          trend_bucket: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'bucket_minutes') | string ~ 'm'
+               if state_attr('sensor.outside_pressure_trend_raw', 'bucket_minutes') is not none
+               else '30m' }}
+          aggregation: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'aggregation')
+               if state_attr('sensor.outside_pressure_trend_raw', 'aggregation') is not none
+               else 'median' }}
+          updated_at: >
+            {{ state_attr('sensor.outside_pressure_trend_raw', 'updated_at') }} 
+
+homeassistant:
+  packages: !include_dir_named packages
