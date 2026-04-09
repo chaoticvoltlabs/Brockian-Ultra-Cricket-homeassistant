@@ -70,3 +70,13 @@ Direct controls:
 - [`docs/entities-and-payloads.md`](docs/entities-and-payloads.md)
 - [`docs/scene-examples.md`](docs/scene-examples.md)
 - [`docs/operations.md`](docs/operations.md)
+
+
+## Copyright & license
+
+PolyForm Noncommercial License 1.0.0
+with Commercial Use by Explicit Permission Only
+See LICENSE.txt
+
+
+Copyright (c) 2026 Robin Kluit / Chaoticvolt.
