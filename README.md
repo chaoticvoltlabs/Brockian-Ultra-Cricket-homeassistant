@@ -18,6 +18,13 @@ The current chain is:
 2. BUC reads those entities and exposes compact panel APIs.
 3. The panel consumes those APIs and sends control intents back through BUC.
 
+## Related repositories
+
+- [Brockian-Ultra-Cricket-server](https://github.com/chaoticvoltlabs/Brockian-Ultra-Cricket-server)
+  - BUC server and compact API layer
+- [Brockian-Ultra-Cricket-panel](https://github.com/chaoticvoltlabs/Brockian-Ultra-Cricket-panel)
+  - embedded panel firmware client
+
 ## Current package ownership
 
 - [`packages/panels/open_meteo_rest.yaml`](packages/panels/open_meteo_rest.yaml)
