@@ -58,6 +58,7 @@ Owns:
 
 - [`packages/panels/overview.yaml`](../packages/panels/overview.yaml)
   - `sensor.panel_overview_payload`
+  - `input_boolean.panel_night_mode`
 
 Overview should compose from canonical derived sensors, not duplicate weather derivation logic.
 
@@ -70,6 +71,7 @@ Overview should compose from canonical derived sensors, not duplicate weather de
 - `sensor.panel_weather_daily`
 - `sensor.panel_indoor_payload`
 - `sensor.panel_overview_payload`
+- `input_boolean.panel_night_mode`
 
 ### Panel control path affects
 

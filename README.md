@@ -47,6 +47,7 @@ The current chain is:
 - `sensor.panel_weather_daily`
 - `sensor.panel_indoor_payload`
 - `sensor.panel_overview_payload`
+- `input_boolean.panel_night_mode`
 
 ## Example scene assumptions
 

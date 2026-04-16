@@ -12,6 +12,7 @@
 
 - `sensor.panel_indoor_payload`
 - `sensor.panel_overview_payload`
+- `input_boolean.panel_night_mode`
 
 ## Canonical ownership
 
@@ -60,3 +61,5 @@ Expected to expose `tiles` for the indoor page.
 ### `sensor.panel_overview_payload`
 
 Expected to expose overview-oriented weather and pressure-trend data used by BUC enrichment.
+
+It also carries a top-level `night_mode` boolean so downstream renderers can switch palette or theme without inventing a separate local schedule.

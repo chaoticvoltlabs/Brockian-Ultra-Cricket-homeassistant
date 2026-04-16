@@ -32,6 +32,7 @@ Typical checks:
 - `sensor.panel_weather_daily` exists and is valid
 - `sensor.panel_indoor_payload` exists and is valid
 - `sensor.panel_overview_payload` exists and is valid
+- `input_boolean.panel_night_mode` exists if you want panel-wide day/night switching
 - example scene IDs match the BUC command mappings
 
 ## Repo notes

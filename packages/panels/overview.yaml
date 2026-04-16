@@ -1,3 +1,8 @@
+input_boolean:
+  panel_night_mode:
+    name: Panel Night Mode
+    icon: mdi:weather-night
+
 template:
   - sensor:
       - name: "Panel Overview Payload"
@@ -10,6 +15,7 @@ template:
           map_format: "svg"
           map_version: 1
           map_theme: "light"
+          night_mode: "{{ is_state('input_boolean.panel_night_mode', 'on') }}"
           indoor: >
             {{ state_attr('sensor.panel_indoor_payload', 'tiles') | default('[]', true) }}
           weather: >
